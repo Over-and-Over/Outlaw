@@ -11,6 +11,7 @@ Frame::Frame(sf::String _background)
     background = _background;
     onClick ="";
     onMouseMove = "";
+    txt.loadFromFile("gfx\\GUI\\start.jpg");
 }
 
 Frame::Frame()
@@ -29,6 +30,8 @@ Frame::~Frame()
 void Frame::Clear()
 {
     objects.clear();
+    keyScripts.clear();
+    globalScript.clear();
     background = "";
 }
 
@@ -40,15 +43,10 @@ void Frame::removeObject(unsigned int _id)
 }
 
 
-void Frame::Show(sf::RenderWindow& _window)
+void Frame::Show(sf::RenderWindow* _window)
 {
-    window = &_window;
+    window = _window;
     DrawScene();
-}
-
-void Frame::addScript(sf::String _script)
-{
-    globalScript.push_back(_script);
 }
 
 void Frame::DrawScene()
@@ -65,8 +63,22 @@ void Frame::DrawScene()
     }
 
     for (unsigned int i=0; i<objects.size(); i++) {
-        //window->draw(objects[i].getSprite());
+        //std::cout << "in frame 1: " << objects[i].texture << std::endl;
+        //std::cout << "in frame 2: " << objects[i].sprite.getTexture()->getSize().x << std::endl;
+        //t = *objects[i].sprite.getTexture();
+        //objects[i].sprite.setTexture(*qqq);
+        window->draw(*objects[i]);
+        //objects[i].testing(ptr);
     }
+    //my.setTexture(txt);
+    //window->draw(my);
+
+    /*sf::Texture t;
+    t.loadFromFile("gfx\\GUI\\logo.jpg");
+    Object logo = Object("", 165, 30, t);
+    logo.setScale(1.1, 1.1);
+    logo.sprite.setTexture(t);
+    window->draw(logo.sprite);*/
 
     for (std::map<sf::String, Object>::iterator it=m_objects.begin(); it!=m_objects.end(); ++it) {
         //temp = (it->second).getSprite();
@@ -83,29 +95,14 @@ void Frame::LoadData(const char* _path)
     tmap.open(_path);
 
     int width, height;
+    char t;
     tmap >> width;
     tmap >> height;
     unsigned short int psize = 32;
 
-    int i = 0, j = 0;
-    char t;
-    sf::String tmp_texture;
-    for (j=0; j<height; j++) {
-        for (i=0; i<width; i++) {
+    for (unsigned j=0; j<height; j++) {
+        for (unsigned i=0; i<width; i++) {
             tmap >> t;
-            /*if (t == '.') {
-                tmp_texture = "gfx\\objects\\sand1.jpg";
-            } else
-            if (t == 'B') {
-                tmp_texture = "gfx\\objects\\wall1.jpg";
-            } else
-            if (t == 'b') {
-                tmp_texture = "gfx\\objects\\box1.png";
-            } else
-            if (t == 't') {
-                tmp_texture = "gfx\\objects\\box2.png";
-            }*/
-            addObject(Object("block", i*psize, j*psize, true));
         }
     }
     tmap.close();
@@ -113,16 +110,18 @@ void Frame::LoadData(const char* _path)
 
 void Frame::addObject(Object _obj)
 {
-    //if (objects.count(_obj.getName()) = 0)
     objects.push_back(_obj);
-
 }
-
 void Frame::cacheObject(Object _obj)
 {
     m_objects[_obj.getName()] = Object(_obj);
 }
 
+
+void Frame::addScript(sf::String _script)
+{
+    globalScript.push_back(_script);
+}
 
 void Frame::setKeyEvent(sf::Keyboard::Key _code, sf::String _script)
 {

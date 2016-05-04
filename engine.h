@@ -5,17 +5,16 @@
 #include <SFML/Graphics.hpp>
 #include "frame.h"
 
-
 class Engine {
+    std::vector <Frame*> frames;
+    std::vector <sf::String> script;
+
     sf::VideoMode video_mode;
     sf::RenderWindow* window;
 
     bool created, shutdownFlag;
     unsigned int framesCount, currentFrame;
     sf::String window_caption;
-
-    std::vector <Frame> frames;
-    std::vector <sf::String> script;
 
     void Control();
     void DrawScene();
@@ -27,9 +26,8 @@ public:
     sf::VideoMode getVideoMode() { return video_mode; };
     sf::String getWindowCaption() { return window_caption; };
 
-    void addFrame(Frame _frame) { frames.push_back(_frame); framesCount++; };
+    void addFrame(Frame* _frame) { frames.push_back(_frame); framesCount++; };
     void Start();
-
 };
 
 

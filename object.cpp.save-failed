@@ -18,10 +18,12 @@ Object::Object()
     onMouseExit = "";
 }
 
-Object::Object(const Object& _obj)
+Object::Object(const Object& _obj):sf::Transformable(_obj)
 {
-    sprite = sf::Sprite(_obj.sprite);
+    sprite = _obj.sprite;
+    texture = _obj.texture;
     std::cout << "in obj copy: " << sprite.getTexture() << std::endl;
+    //sprite.setTexture(*texture);
 
     name = _obj.name;
 
@@ -32,7 +34,21 @@ Object::Object(const Object& _obj)
     onClick = _obj.onClick;
     onMouseMove = _obj.onMouseMove;
     onMouseExit = _obj.onMouseExit;
+}
 
+Object::Object(sf::String _name)
+{
+    sprite.setPosition(0, 0);
+
+    name = _name;
+
+    rotation = 0;
+    visible = true;
+    mouseUnder = false;
+
+    onClick = "";
+    onMouseMove = "";
+    onMouseExit = "";
 }
 
 Object::Object(sf::String _name, float _x, float _y)
@@ -50,12 +66,14 @@ Object::Object(sf::String _name, float _x, float _y)
     onMouseExit = "";
 }
 
-Object::Object(sf::String _name, float _x, float _y, sf::Texture* _texture)
+Object::Object(sf::String _name, float _x, float _y, sf::Texture& _texture)
 {
-    std::cout << "in obj origin texture: " << _texture << std::endl;
 
+    texture = &_texture;
+    std::cout << "in obj origin: " << &_texture << std::endl;
+    std::cout << "in obj: " << texture << std::endl;
     sprite.setPosition(_x, _y);
-    sprite.setTexture(*_texture);
+    sprite.setTexture(_texture);
 
     name = _name;
 
@@ -70,15 +88,12 @@ Object::Object(sf::String _name, float _x, float _y, sf::Texture* _texture)
 
 Object::~Object()
 {
+
 }
 
 void Object::setSize(float _width, float _height)
 {
-    sprite.setScale(_width/getSize().x, _height/getSize().y);
-}
-void Object::setScale(float _xfactor, float _yfactor)
-{
-    sprite.setScale(_xfactor, _yfactor);
+    sprite.setScale(_width/width, _height/height);
 }
 sf::Vector2f Object::getSize()
 {

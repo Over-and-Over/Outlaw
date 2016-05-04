@@ -1,8 +1,7 @@
+#include <iostream>
 #include <SFML/Graphics.hpp>
 #include "engine.h"
-#include <iostream>
 
-// Video init
 Engine::Engine(unsigned short int _video_mode, sf::String _window_caption)
 {
     if (_video_mode == 0) {
@@ -18,9 +17,7 @@ Engine::Engine(unsigned short int _video_mode, sf::String _window_caption)
 
     window = new sf::RenderWindow(video_mode, _window_caption/*, sf::Style::Fullscreen*/);
     //window->setVerticalSyncEnabled(true);
-    window->setFramerateLimit(30);
-
-
+    window->setFramerateLimit(15);
 
     created = true;
     shutdownFlag = false;
@@ -44,16 +41,19 @@ void Engine::Start()
 
 void Engine::DrawScene()
 {
+    //frames.at(currentFrame)->txt.loadFromFile("gfx\\GUI\\exit.jpg");
+    //frames[currentFrame]->my.setTexture(frames[currentFrame]->txt);
     while (window->isOpen() && !shutdownFlag) {
 
-        // Hook events
         Control();
         Interpret();
 
         window->clear();
-
-        if (currentFrame <= framesCount)
-            frames[currentFrame].Show(*window);
+        //frames[currentFrame]->txt.loadFromFile("gfx\\GUI\\exit.jpg");
+        if (currentFrame <= framesCount-1 and currentFrame >= 0)
+            frames[currentFrame]->Show(window);
+        else
+            break;
 
         window->display();
     }
@@ -66,7 +66,7 @@ void Engine::Control()
 {
         script.clear();
 
-        for (unsigned int i=0; i<frames[currentFrame].getScript().size(); i++) {
+        /*for (unsigned int i=0; i<frames[currentFrame].getScript().size(); i++) {
             script.push_back(frames[currentFrame].getScript()[i]);
         }
 
@@ -83,8 +83,8 @@ void Engine::Control()
                     Object& temp1 = frames[currentFrame].getObjects()[i];
                     if (temp1.onClick == "") continue;
                     float w, h;
-                    w = temp1.getSize().a;
-                    h = temp1.getSize().b;
+                    w = temp1.getSize().x;
+                    h = temp1.getSize().y;
                     if (event.mouseButton.x > temp1.getX() && event.mouseButton.y > temp1.getY() &&
                         event.mouseButton.x < temp1.getX()+w && event.mouseButton.y < temp1.getY()+h) {
                         script.push_back(temp1.onClick);
@@ -96,8 +96,8 @@ void Engine::Control()
                     Object& temp1 = frames[currentFrame].getObjects()[i];
                     if (temp1.onMouseMove == "") continue;
                     float w, h;
-                    w = temp1.getSize().a;
-                    h = temp1.getSize().b;
+                    w = temp1.getSize().x;
+                    h = temp1.getSize().y;
                     if (event.mouseMove.x > temp1.getX() && event.mouseMove.y > temp1.getY() &&
                         event.mouseMove.x < temp1.getX()+w && event.mouseMove.y < temp1.getY()+h) {
                         script.push_back(temp1.onMouseMove);
@@ -110,7 +110,7 @@ void Engine::Control()
                     }
                 }
             }
-        }
+        }*/
 }
 
 // "Compiler"
@@ -119,7 +119,7 @@ void Engine::Interpret()
     for (unsigned int i=0; i<script.size(); i++) {
 
         if (script[i] == "move();") {
-            frames[currentFrame].m_objects["player"].setXY(frames[currentFrame].m_objects["player"].getX() + 5, frames[currentFrame].m_objects["player"].getY() + 5);
+            //frames[currentFrame].m_objects["player"].setXY(frames[currentFrame].m_objects["player"].getX() + 5, frames[currentFrame].m_objects["player"].getY() + 5);
         } else
         if (script[i] == "exit();") {
             shutdownFlag = true;
@@ -147,9 +147,6 @@ void Engine::Interpret()
         } else
         if (script[i] == "begin();") {
             currentFrame = 0;
-        } else
-        if (script[i] == "move();") {
-            frames[currentFrame].m_objects["player"].setXY(frames[currentFrame].m_objects["player"].getX() + 5, frames[currentFrame].m_objects["player"].getY() + 5);
         }
     }
 
