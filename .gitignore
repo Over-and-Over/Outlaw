@@ -1,0 +1,11 @@
+*.exe
+*.o
+*.jpg
+*.png
+*.bmp
+*.dll
+*.depend
+*.layout
+SFML/
+bin/
+obj/
